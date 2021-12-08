@@ -4,7 +4,7 @@ from __main__ import app
 
 from b003.pyModbus.synchronousCliente.synchronousClientConnection import synchronous_client_connection
 
-connection = synchronous_client_connection('192.168.100.39', 502)
+connection = synchronous_client_connection('10.4.3.33', 502)
 connection.connect()
 
 
