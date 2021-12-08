@@ -44,7 +44,7 @@ class AsynchronousServer:
         # ----------------------------------------------------------------------- #
 
     def start(self):
-        time = 1  # 5 seconds delay
+        time = 1  # 1 seconds delay
         loop = LoopingCall(f=updating_writer, a=(self.context, self.log))
         loop.start(time, now=False)  # initially delay by time
         # TCP Server
