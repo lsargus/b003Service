@@ -1,5 +1,5 @@
 from b003.database import Database
-from b003.database2 import Database2
+from b003.database import Database
 from b003.models.requestModbusServer import RequestModbusServer
 from sqlalchemy.sql import select
 
@@ -11,7 +11,7 @@ SQL_CRIA_REQUEST = 'INSERT into Request_modbus (tp_register, ip_clp, ds_request,
 
 class RequestModbusDao:
     def __init__(self):
-        self.__db = Database2('b003SQL.db')
+        self.__db = Database('b003SQL.db')
 
     def persistRequest(self, request: RequestModbusServer):
         session = self.__db.session

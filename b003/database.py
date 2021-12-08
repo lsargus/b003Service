@@ -1,10 +1,17 @@
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 
 class Database:
+
     def __init__(self, name):
-        self._conn = sqlite3.connect(name)
-        self._cursor = self._conn.cursor()
+        self.__engine = create_engine('sqlite:///' + name, echo=True)
+
+        self.__conn = self.__engine.connect()
+
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
 
     def __enter__(self):
         return self
@@ -14,25 +21,12 @@ class Database:
         self.connection.close()
 
     @property
-    def connection(self):
-        return self._conn
+    def conn(self):
+        return self.__conn
 
     @property
-    def cursor(self):
-        return self._cursor
-
-    def commit(self):
-        self.connection.commit()
-
-    def execute(self, sql, params=None):
-        self.cursor.execute(sql, params or ())
-
-    def fetchall(self):
-        return self.cursor.fetchall()
-
-    def fetchone(self):
-        return self.cursor.fetchone()
-
-    def query(self, sql, params=None):
-        self.cursor.execute(sql, params or ())
-        return self.fetchall()
+    def session(self):
+        if self.__session is None:
+            session = sessionmaker(self.__engine)
+            self.__session = session()
+        return self.__session

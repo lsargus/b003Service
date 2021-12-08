@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from b003.dao.requestModbusDao import RequestModbusDao
-from b003.database2 import Database2
+from b003.database import Database
 from b003.pyModbus.asynchronousServer.asynchronousServer import AsynchronousServer
 
 app = Flask(__name__)
