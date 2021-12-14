@@ -6,3 +6,4 @@ setuptools~=58.2.0
 Twisted~=21.7.0
 SQLAlchemy~=1.4.25
 app~=0.0.1
+numpy~=1.21.4

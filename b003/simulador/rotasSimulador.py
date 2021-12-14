@@ -2,7 +2,7 @@ from __main__ import app
 
 from flask import request
 
-from b003.converterValueRequestModbus import convert_modbus_requesto_bool_to_array_string, \
+from b003.dao.helper.converterValueRequestModbus import convert_modbus_requesto_bool_to_array_string, \
     convert_modbus_requesto_string_to_array_bool
 from b003.dao.requestModbusDao import RequestModbusDao
 from b003.enums.tpRegister import TpRegister
