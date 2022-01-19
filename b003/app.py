@@ -8,7 +8,6 @@ app.config.from_object('config.Config')
 CORS(app)
 
 # import declared routes
-from tensorflow import rotasTensorflow
 from simulador import rotasSimulador
 
 if __name__ == "__main__":
