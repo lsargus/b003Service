@@ -1,7 +1,10 @@
 Flask~=2.0.2
 Flask-Restless~=0.17.0
 Flask-SQLAlchemy~=2.5.1
+Flask-Cors~=3.0.10
+aiohttp~=3.8.1
 pymodbus~=2.5.3
+pyserial-asyncio~=0.6
 setuptools~=58.2.0
 Twisted~=21.7.0
 SQLAlchemy~=1.4.25

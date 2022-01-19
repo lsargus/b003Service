@@ -5,7 +5,7 @@ FORMAT = '%(asctime)-15s %(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s'
 
 
 class SynchronousClientConnection:
-    def __init__(self, host='127.0.0.1', port=5000):
+    def __init__(self, host='127.0.0.1', port=5020):
         logging.basicConfig(format=FORMAT)
 
         self.client = ModbusClient(host, port=port)

@@ -7,6 +7,10 @@ from pymodbus.server.asynchronous import StartTcpServer
 from pymodbus.version import version
 from twisted.internet.task import LoopingCall
 
+from b003.dao.requestModbusDao import RequestModbusDao
+from b003.enums.tpRegister import TpRegister
+from b003.pyModbus.customModbusResponse import CustomModbusRequest
+
 FORMAT = '%(asctime)-15s %(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s'
 
 
@@ -17,14 +21,29 @@ class AsynchronousServer:
         self.port = port
         self.host = host
 
-        self.store = ModbusSlaveContext(
-            di=ModbusSequentialDataBlock(0, [17] * 100),
-            co=ModbusSequentialDataBlock(0, [17] * 100),
-            hr=ModbusSequentialDataBlock(0, [17] * 100),
-            ir=ModbusSequentialDataBlock(0, [17] * 100))
-        self.context = ModbusServerContext(slaves=self.store, single=True)
+        # ----------------------------------------------------------------------- #
+        # initialize your data store
+        # ----------------------------------------------------------------------- #
+        di_block = ModbusSequentialDataBlock(0, [False] * 8)
+        co_block = ModbusSequentialDataBlock(0, [False] * 8)
+        hr_block = ModbusSequentialDataBlock(0, [10] * 10)
+        ir_block = ModbusSequentialDataBlock(0, [10] * 10)
+        store = ModbusSlaveContext(
+            di=di_block,
+            co=co_block,
+            hr=hr_block,
+            ir=ir_block,
+            zero_mode=True)
+
+        # store.register(1, 'co', co_block)
+        # store.register(4, 'ir', ir_block)
+        # store.register(2, 'di', di_block)
+        # store.register(16, 'hr', hr_block)
+
+        self.context = ModbusServerContext(slaves=store, single=True)
+
         self.log = logging.getLogger()
-        self.log.setLevel(logging.INFO)
+        self.log.setLevel(logging.DEBUG)
 
         # ----------------------------------------------------------------------- #
         # initialize the server information
@@ -44,12 +63,22 @@ class AsynchronousServer:
         # ----------------------------------------------------------------------- #
 
     def start(self):
-        time = 1  # 1 seconds delay
+        time = 5  # 5 seconds delay
         loop = LoopingCall(f=updating_writer, a=(self.context, self.log))
         loop.start(time, now=False)  # initially delay by time
-        # TCP Server
-        StartTcpServer(self.context, identity=self.identity, address=(self.host, self.port))
 
+        # TCP Server
+        StartTcpServer(self.context, identity=self.identity, address=(self.host, self.port),
+                       custom_functions=[CustomModbusRequest])
+
+    def read_coil(self, adress: int = 0, count: int = 1):
+        """
+        Realiza a leitura de um valor discreto
+        :param adress: endereço do bite
+        :param count: quantidade de bites a serem lidos
+        :return:
+        """
+        return self.context.getValues(adress, count)
 
 
 def updating_writer(a):
@@ -64,14 +93,49 @@ def updating_writer(a):
     context = a[0]
 
     slave_id = 0x00
-    # lê valores analógicos
-    print(context[slave_id].getValues(1, 0x00, count=10))
-    #print(context[slave_id].getValues(2, 0x00, count=10))
-    #print(context[slave_id].getValues(3, 0x00, count=10))
-    #print(context[slave_id].getValues(4, 0x00, count=10))
 
-    # lê valores discretos
-    #print(context[slave_id].getValues(1, 0x00, count=10))
+    # dao = RequestModbusDao()
 
-    #context[slave_id].setValues(2, 0x00, '99')
-    #context[slave_id].setValues(4, 0x00, '99')
+    # busca requisições pendentes no banco]
+    # result = dao.find_pending()
+
+    vd = context[slave_id].store['d']
+    vc = context[slave_id].store['c']
+    vi = context[slave_id].store['i']
+    vh = context[slave_id].store['h']
+
+    context[slave_id].store['c'].setValues(0, True)
+    context[slave_id].store['c'].setValues(1, False)
+    context[slave_id].store['c'].setValues(2, True)
+    context[slave_id].store['c'].setValues(3, False)
+    context[slave_id].store['c'].setValues(4, True)
+    context[slave_id].store['c'].setValues(5, False)
+    context[slave_id].store['c'].setValues(6, True)
+    context[slave_id].store['c'].setValues(7, False)
+
+    context[slave_id].store['d'].setValues(0, True)
+    context[slave_id].store['d'].setValues(1, False)
+    context[slave_id].store['d'].setValues(2, True)
+    context[slave_id].store['d'].setValues(3, False)
+    context[slave_id].store['d'].setValues(4, True)
+    context[slave_id].store['d'].setValues(5, False)
+    context[slave_id].store['d'].setValues(6, True)
+    context[slave_id].store['d'].setValues(7, False)
+
+    context[slave_id].store['h'].setValues(0, '11')
+    context[slave_id].store['h'].setValues(1, '12')
+    context[slave_id].store['h'].setValues(2, '13')
+    context[slave_id].store['h'].setValues(3, '14')
+    context[slave_id].store['h'].setValues(4, '15')
+    context[slave_id].store['h'].setValues(5, '16')
+    context[slave_id].store['h'].setValues(6, '17')
+    context[slave_id].store['h'].setValues(7, '18')
+
+    context[slave_id].store['i'].setValues(0, '11')
+    context[slave_id].store['i'].setValues(1, '12')
+    context[slave_id].store['i'].setValues(2, '13')
+    context[slave_id].store['i'].setValues(3, '14')
+    context[slave_id].store['i'].setValues(4, '15')
+    context[slave_id].store['i'].setValues(5, '16')
+    context[slave_id].store['i'].setValues(6, '17')
+    context[slave_id].store['i'].setValues(7, '18')

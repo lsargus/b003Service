@@ -34,5 +34,5 @@ class RequestModbusDao:
     def find_pending(self):
         session = self.__db.session
 
-        result = session.query(RequestModbusServer).filter(RequestModbusServer.executed == False).first()
+        result = session.query(RequestModbusServer).filter(RequestModbusServer.executed == False)
         return result

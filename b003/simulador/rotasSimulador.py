@@ -1,3 +1,4 @@
+import json
 from __main__ import app
 
 from flask import request
@@ -29,3 +30,12 @@ def teste_get():
     dao.persistRequest(req)
 
     return "<p>Peguei " + valvula1 + " Peguei " + valvula2 + "</p>"
+
+@app.route('/estadoVavula', methods=['GET'])
+def estado_valvula():
+    d = {
+        'valvula_1': True,
+        'valvula_2': False,
+    }
+
+    return json.dumps(d)
